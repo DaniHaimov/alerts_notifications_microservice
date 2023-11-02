@@ -8,6 +8,9 @@ This app serves as a system to process and handle alerts and notifications based
 * **Rule Management**: Allows the addition of new rules dynamically.
 * **Docker Integration**: Designed to run within a Docker container for easy deployment.
 
+## Usage
+This application is designed to listen for messages on a RabbitMQ queue and process events based on defined rules.
+
 ## Installation
 Before installation, ensure that Docker and Python are installed on your system.
 1. Clone the repository or download the application files.

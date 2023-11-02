@@ -28,23 +28,23 @@ class AlertsAndNotifications:
         self.__channel.start_consuming()
 
     def add_rule(self, event_data):
-        role_key = event_data.get('role_key')
+        rule_key = event_data.get('rule_key')
         msg = event_data.get('message')
-        self.__rules.update({role_key: lambda x: print(msg)})
+        self.__rules.update({rule_key: lambda x: print(msg)})
 
     def default_handler(self, event_data):
         event = event_data.get('event', None)
-        if event.startswith('ROLE'):
+        if event.startswith('RULE'):
             rule_num = event[4:]
             handler = (lambda: print(f'WARNING{rule_num}'))
         else:
-            handler = self.__rules.get(event, lambda: print(f'{event}: Unknown role'))
+            handler = self.__rules.get(event, lambda: print(f'{event}: Unknown rule'))
         handler()
 
     def process_event(self, event_data):
         event_key = event_data.get('event', None)
-        role = self.__rules.get(event_key, self.default_handler)
-        role(event_data)
+        rule = self.__rules.get(event_key, self.default_handler)
+        rule(event_data)
 
 
 __alerts_n_notifications: AlertsAndNotifications

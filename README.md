@@ -44,7 +44,12 @@ pip install -r requirements.txt
 ## Deploy RabbitMQ
 ### Local Install
 ```bash
-
+  // Refresh the apt-get repository
+  sudo apt-get update
+  // Install RabbitMQ
+  sudo apt-get install rabbitmq-server
+  // Start the RabbitMQ
+  sudo systemctl start rabbitmq-server
 ```
   
 ### Container Deploy

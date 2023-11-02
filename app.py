@@ -2,7 +2,10 @@ import pika
 import json
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
+
+_channel = None
 
 
 def _def_callback(ch, method, properties, body):
@@ -12,17 +15,13 @@ def _def_callback(ch, method, properties, body):
 
 class AlertsAndNotifications:
     def __init__(self,
-                 host: str = 'localhost',
-                 port: int = 8080,
-                 name: str = 'event_queue',
+                 channel,
+                 name: str,
                  callback_func=_def_callback):
         self.__rules = {
             'ADD_RULE': self.add_rule
         }
-        self.__connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
-        self.__channel = self.__connection.channel()
-        self.__channel.queue_declare(queue=name)
-
+        self.__channel = channel
         self.__channel.basic_consume(queue=name, on_message_callback=callback_func, auto_ack=True)
 
     def start(self):
@@ -50,17 +49,24 @@ class AlertsAndNotifications:
 
 __alerts_n_notifications: AlertsAndNotifications
 
-
 if __name__ == '__main__':
+    print("DockerInit")
     msg_broker_host = os.getenv("MESSAGE_BROKER_CONSUMER_HOST")
     msg_broker_port = int(os.getenv("MESSAGE_BROKER_CONSUMER_PORT"))
     msg_broker_name = os.getenv("MESSAGE_BROKER_CONSUMER_NAME")
 
-    __alerts_n_notifications = AlertsAndNotifications(host=msg_broker_host,
-                                                      port=msg_broker_port,
+    amqp_url = f'amqp://guest:guest@{msg_broker_host}:{msg_broker_port}/%2F'
+
+    params = pika.URLParameters(amqp_url)
+    # params = pika.ConnectionParameters(host=msg_broker_host, port=msg_broker_port)
+
+    connection = pika.BlockingConnection(params)
+    _channel = connection.channel()
+    _channel.queue_declare(queue=msg_broker_name)
+
+    __alerts_n_notifications = AlertsAndNotifications(channel=_channel,
                                                       name=msg_broker_name,
                                                       callback_func=_def_callback)
 
     print(os.getenv("STARTING_MSG").format(msg_broker_host, msg_broker_port, msg_broker_name))
     __alerts_n_notifications.start()
-

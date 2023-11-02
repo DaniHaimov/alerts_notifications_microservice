@@ -14,7 +14,7 @@ This application is designed to listen for messages on a RabbitMQ queue and proc
 ## Installation
 Before installation, ensure that Docker and Python are installed on your system.
 1. Clone the repository or download the application files.
-2. [Deploy RabbitMQ](README.md#deploy-rabbitmq) 
+2. [Deploy RabbitMQ](#Deploy_RabbitMQ) 
 
 ## Configuration
 Before running the application, configure the environment variables. Create a `.env` file in the root directory and set the following variables:
@@ -44,6 +44,7 @@ Install dependencies using `pip`:
 pip install -r requirements.txt
 ```
 
+<a name="Deploy_RabbitMQ"></a>
 ## Deploy RabbitMQ
 ### Local Install
 ```bash
